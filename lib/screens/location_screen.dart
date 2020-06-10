@@ -23,11 +23,18 @@ class _LocationScreenState extends State<LocationScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    updateUI(widget.locationWeather);
+    updateUI(widget.locationWeather); //To access the value of locationWeather received from loading_screen into LocationScreen
   }
 
-  void updateUI(dynamic weatherData) {
-    setState(() {
+  void updateUI(dynamic weatherData) { //to update the UI data as per the info received
+    setState(() { //to reload the screen as and when the data changes
+      if(weatherData == null) {
+        temperature = 0;
+        weatherIcon = 'Error';
+        weatherInfo = 'Unable to get weather data';
+        cityName = '';
+        return;
+      }
       double temp = weatherData['main']['temp'];
       temperature = temp.toInt();
       var condition = weatherData['weather'][0]['id'];
@@ -59,7 +66,10 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await weatherModel.getLocationWeather();
+                      updateUI(weatherData);
+                    },
                     child: Icon(
                       Icons.near_me,
                       size: 50.0,
